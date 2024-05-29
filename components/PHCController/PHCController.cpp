@@ -77,13 +77,11 @@ namespace esphome
                 {
                     ESP_LOGW(TAG, "Recieved bad message (checksum missmatch 01)");
 
-
-                    //show more Debug information
+                    // show more Debug information
                     ESP_LOGW(TAG, "Recieved: %02X %02X %02X %02X %02X", msg[0], msg[1], msg[2], msg[3], msg[4]);
 
-
                     // Send default acknowledgement
-                     send_acknowledgement(address, toggle);
+                    send_acknowledgement(address, toggle);
 
                     // Skip the loop if the checksum is wrong
                     return;
