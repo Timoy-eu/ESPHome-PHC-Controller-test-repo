@@ -270,7 +270,7 @@ namespace esphome
 
         void inline PHCController::send_acknowledgement(uint8_t address, bool toggle)
         {
-            uint8_t message[5] = {BROADCAST_ADDRESS, static_cast<uint8_t>((toggle ? 0x80 : 0x00) | 0x01), 0x00, 0x00, 0x00};
+            uint8_t message[5] = {address, static_cast<uint8_t>((toggle ? 0x80 : 0x00) | 0x01), 0x00, 0x00, 0x00};
             uint16_t crc = util::PHC_CRC(message, 3);
 
             message[3] = static_cast<uint8_t>(crc & 0xFF);
