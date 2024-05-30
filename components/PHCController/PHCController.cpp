@@ -189,7 +189,7 @@ namespace esphome
 
                     ESP_LOGW(TAG, "Sending acknowledgement for module: %i", *device_class_id);
                     // Send extra (speedy) acknowledgement, seems to help
-                    send_acknowledgement(*device_class_id, toggle);
+                    send_acknowledgement(device_id, toggle);
 
                     //  Find the switch and set the state
                     if (emds_.count(util::key(device_id, channel)))
@@ -270,6 +270,7 @@ namespace esphome
 
             message[3] = static_cast<uint8_t>(crc & 0xFF);
             message[4] = static_cast<uint8_t>((crc & 0xFF00) >> 8);
+
 
             delayMicroseconds(TIMING_DELAY);
             write_array(message, 5, true);
