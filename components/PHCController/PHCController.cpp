@@ -101,6 +101,9 @@ namespace esphome
                 }
 
                 last_message_time_ = millis();
+
+                // Process the command
+                ESP_LOGW(TAG, "Processing command");
                 process_command(&address, toggle, msg + 2, &content_length);
                 return;
             }
@@ -138,6 +141,7 @@ namespace esphome
                 // Initial configuration request message
                 if (message[0] == 0xFF)
                 {
+                    ESP_LOGW(TAG, "Received configuration request from (EMD) Module: [DIP: %i]", device_id);
                     //  Configure EMD
                     delayMicroseconds(TIMING_DELAY);
                     send_emd_config(device_id);
@@ -148,6 +152,7 @@ namespace esphome
                 // Handle acknowledgement (such as switch led state)
                 if (message[0] == 0x00)
                 {
+                    ESP_LOGW(TAG, "Received acknowledgement from (EMD) Module: [DIP: %i, channel: %i]", device_id, channel);
                     bool handled = false;
                     uint8_t channels = message[1];
                     for (uint8_t i = 0; i < 8; i++)
@@ -174,14 +179,17 @@ namespace esphome
                 }
                 else
                 {
+                    // Handle switch state
                     uint8_t action = message[0] & 0x0F;
 
+                    ESP_LOGW(TAG, "Sending acknowledgement for module: %i", *device_class_id);
                     // Send extra (speedy) acknowledgement, seems to help
                     send_acknowledgement(*device_class_id, toggle);
 
                     //  Find the switch and set the state
                     if (emds_.count(util::key(device_id, channel)))
                     {
+                        ESP_LOGW(TAG, "Received switch state from (EMD) Module: [DIP: %i, channel: %i]", device_id, channel);
                         auto *emd = emds_[util::key(device_id, channel)];
                         if (action == 0x02) // ON
                             emd->publish_state(true);
