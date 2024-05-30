@@ -277,6 +277,8 @@ namespace esphome
             message[4] = static_cast<uint8_t>((crc & 0xFF00) >> 8);
 
             delayMicroseconds(TIMING_DELAY);
+            ESP_LOGI(TAG, "Sent acknowledgement for module: %i in ms: %i", address, TIMING_DELAY);
+
             write_array(message, 5, true);
         }
 
