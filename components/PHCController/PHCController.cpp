@@ -200,6 +200,11 @@ namespace esphome
                             emd->publish_state(true);
                         if (action == 0x07 || action == 0x03 || action == 0x05) // OFF
                             emd->publish_state(false);
+
+                        // acknowledge the message to prevent retransmits
+                        ESP_LOGI(TAG, "Sent acknowledgement for module: %i", *device_class_id);
+                        send_acknowledgement(*device_class_id, toggle);
+
                         return;
                     }
 
@@ -270,7 +275,6 @@ namespace esphome
 
             message[3] = static_cast<uint8_t>(crc & 0xFF);
             message[4] = static_cast<uint8_t>((crc & 0xFF00) >> 8);
-
 
             delayMicroseconds(TIMING_DELAY);
             write_array(message, 5, true);
