@@ -156,6 +156,7 @@ namespace esphome
                         ESP_LOGI(TAG, "No configuration found for Message from (EMD-Light) Module: [DIP: %i, channel: %i]", device_id, channel);
 
                         // acknowledge the message to prevent retransmits
+                        ESP_LOGI(TAG, "Sent acknowledgement for module: %i", *device_class_id);
                         send_acknowledgement(*device_class_id, toggle);
 
                 }
