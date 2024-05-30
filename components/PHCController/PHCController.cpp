@@ -137,10 +137,9 @@ namespace esphome
 
             // device class
             ESP_LOGW(TAG, "Device class: %i", device_class);
-            
-            //Print toogle bool
-            ESP_LOGW(TAG, "Toggle: %i", toggle);
 
+            // Print toogle bool
+            ESP_LOGW(TAG, "Toggle: %i", toggle);
 
             // EMD
             if (device_class == EMD_MODULE_ADDRESS)
