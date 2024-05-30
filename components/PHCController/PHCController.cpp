@@ -64,7 +64,14 @@ namespace esphome
 
                 // Assert message length is plausible
                 if (content_length > 3)
+                {
+                    ESP_LOGW(TAG, "Recieved bad message (content length too long)");
+                    // Send default acknowledgement
+                    ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
+                    send_acknowledgement(address, toggle);
                     return;
+                }
+
 
                 // Read the actual message content
                 uint8_t msg[content_length + 2];
