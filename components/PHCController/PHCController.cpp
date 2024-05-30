@@ -82,6 +82,7 @@ namespace esphome
 
                     // Send default acknowledgement
                     send_acknowledgement(address, toggle);
+                    ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
 
                     // Skip the loop if the checksum is wrong
                     return;
