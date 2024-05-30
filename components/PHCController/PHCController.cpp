@@ -67,8 +67,8 @@ namespace esphome
                 {
                     ESP_LOGW(TAG, "Recieved bad message (content length too long)");
                     // Send default acknowledgement
-                    ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
-                    send_acknowledgement(address, toggle);
+                    //ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
+                    //send_acknowledgement(address, toggle);
                     return;
                 }
 
