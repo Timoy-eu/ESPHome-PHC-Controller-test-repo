@@ -134,6 +134,14 @@ namespace esphome
         {
             uint8_t device_id = *device_class_id & 0x1F; // DIP settings (5 LSB)
             uint8_t device_class = *device_class_id & 0xE0;
+
+            // device class
+            ESP_LOGW(TAG, "Device class: %i", device_class);
+            
+            //Print toogle bool
+            ESP_LOGW(TAG, "Toggle: %i", toggle);
+
+
             // EMD
             if (device_class == EMD_MODULE_ADDRESS)
             {
