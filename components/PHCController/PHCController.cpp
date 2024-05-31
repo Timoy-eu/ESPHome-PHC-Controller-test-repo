@@ -58,9 +58,11 @@ namespace esphome
                 uint8_t content_length = toggle_and_length & 0x7F; // Mask everything except for the MSB (message length)
 
                 // DEBUG Information
+                /*
                 ESP_LOGD(TAG, "Read address: %02X", address);
                 ESP_LOGD(TAG, "Read toggle and length: %02X", toggle_and_length);
                 ESP_LOGD(TAG, "Toggle bit: %d, Content length: %d", toggle, content_length);
+                */
 
                 // Assert message length is plausible
                 if (content_length > 3)
