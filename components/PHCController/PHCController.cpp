@@ -220,7 +220,7 @@ namespace esphome
                 // Initial configuration request message
                 if (message[0] == 0xFF)
                 {
-                    delayMicroseconds(50);
+                    delayMicroseconds(TIMING_DELAY);
                     send_amd_config(device_id);
                     return;
                 }
