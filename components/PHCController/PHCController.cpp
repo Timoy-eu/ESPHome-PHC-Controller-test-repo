@@ -65,10 +65,10 @@ namespace esphome
                 // Assert message length is plausible
                 if (content_length > 3)
                 {
-                    //ESP_LOGW(TAG, "Recieved bad message (content length too long)");
-                    // Send default acknowledgement
-                    //ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
-                    //send_acknowledgement(address, toggle);
+                    // ESP_LOGW(TAG, "Recieved bad message (content length too long)");
+                    //  Send default acknowledgement
+                    // ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
+                    // send_acknowledgement(address, toggle);
                     return;
                 }
 
@@ -86,14 +86,14 @@ namespace esphome
 
                 if (calculated_checksum != msg_checksum)
                 {
-                    //ESP_LOGW(TAG, "Recieved bad message (checksum missmatch 01)");
+                    // ESP_LOGW(TAG, "Recieved bad message (checksum missmatch 01)");
 
                     // show more Debug information
-                    //ESP_LOGW(TAG, "Recieved: %02X %02X %02X %02X %02X", msg[0], msg[1], msg[2], msg[3], msg[4]);
+                    // ESP_LOGW(TAG, "Recieved: %02X %02X %02X %02X %02X", msg[0], msg[1], msg[2], msg[3], msg[4]);
 
                     // Send default acknowledgement
-                    //ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
-                    //send_acknowledgement(address, toggle);
+                    // ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
+                    // send_acknowledgement(address, toggle);
 
                     // Skip the loop if the checksum is wrong
                     return;
@@ -136,7 +136,7 @@ namespace esphome
             uint8_t device_class = *device_class_id & 0xE0;
 
             // device class
-            //ESP_LOGW(TAG, "Device class: %i", device_class);
+            // ESP_LOGW(TAG, "Device class: %i", device_class);
 
             // Print toogle bool
             // ESP_LOGW(TAG, "Toggle: %i", toggle);
@@ -158,7 +158,7 @@ namespace esphome
                 // Handle acknowledgement (such as switch led state)
                 if (message[0] == 0x00)
                 {
-                    //ESP_LOGW(TAG, "Received acknowledgement from (EMD) Module: [DIP: %i, channel: %i]", device_id, channel);
+                    // ESP_LOGW(TAG, "Received acknowledgement from (EMD) Module: [DIP: %i, channel: %i]", device_id, channel);
                     bool handled = false;
                     uint8_t channels = message[1];
                     for (uint8_t i = 0; i < 8; i++)
@@ -179,16 +179,16 @@ namespace esphome
                         ESP_LOGI(TAG, "No configuration found for Message from (EMD-Light) Module: [DIP: %i, channel: %i]", device_id, channel);
 
                     // acknowledge the message to prevent retransmits
-                    //ESP_LOGI(TAG, "Sent acknowledgement for module: %i", *device_class_id);
-                    //send_acknowledgement(*device_class_id, toggle);
+                    // ESP_LOGI(TAG, "Sent acknowledgement for module: %i", *device_class_id);
+                    // send_acknowledgement(*device_class_id, toggle);
                 }
                 else
                 {
                     // Handle switch state
                     uint8_t action = message[0] & 0x0F;
 
-                    //ESP_LOGW(TAG, "Sending acknowledgement for module: %i", *device_class_id);
-                    // Send extra (speedy) acknowledgement, seems to help
+                    // ESP_LOGW(TAG, "Sending acknowledgement for module: %i", *device_class_id);
+                    //  Send extra (speedy) acknowledgement, seems to help
                     send_acknowledgement(device_id, toggle);
 
                     //  Find the switch and set the state
@@ -202,7 +202,7 @@ namespace esphome
                             emd->publish_state(false);
 
                         // acknowledge the message to prevent retransmits
-                        //ESP_LOGI(TAG, "Sent acknowledgement for module: %i", *device_class_id);
+                        // ESP_LOGI(TAG, "Sent acknowledgement for module: %i", *device_class_id);
                         send_acknowledgement(*device_class_id, toggle);
 
                         return;
@@ -277,7 +277,7 @@ namespace esphome
             message[4] = static_cast<uint8_t>((crc & 0xFF00) >> 8);
 
             delayMicroseconds(TIMING_DELAY);
-            //ESP_LOGI(TAG, "Sent acknowledgement for module: %i in micro sec.: %i", address, TIMING_DELAY);
+            // ESP_LOGI(TAG, "Sent acknowledgement for module: %i in micro sec.: %i", address, TIMING_DELAY);
 
             write_array(message, 5, true);
         }
