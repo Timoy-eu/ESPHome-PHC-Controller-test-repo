@@ -140,15 +140,39 @@ namespace esphome
 
             // better logging for debugging
             std::string log_message = "Device class: " + std::to_string(device_class) + " with response: ";
-             for (int i = 0; i < *length; i++) {
-                 char buffer[5];
-                 sprintf(buffer, "%02X ", message[i]);
-                 log_message += buffer;
-             }
+            for (int i = 0; i < *length; i++)
+            {
+                char buffer[5];
+                sprintf(buffer, "%02X ", message[i]);
+                log_message += buffer;
+            }
 
-             log_message += " with module address: " + std::to_string(device_id);
+            log_message += " with module address: " + std::to_string(device_id);
 
-             ESP_LOGI(TAG, "%s", log_message.c_str());
+            // check if the device class is known
+            if (device_class != EMD_MODULE_ADDRESS && device_class != AMD_MODULE_ADDRESS && device_class != JRM_MODULE_ADDRESS)
+            {
+                ESP_LOGW(TAG, "Received unknown device class: %i", device_class);
+                return;
+            }
+            else
+            {
+                log_message += " with known device class";
+                if (device_class == EMD_MODULE_ADDRESS)
+                {
+                    log_message += " (EMD Module)";
+                }
+                else if (device_class == AMD_MODULE_ADDRESS)
+                {
+                    log_message += " (AMD Module)";
+                }
+                else if (device_class == JRM_MODULE_ADDRESS)
+                {
+                    log_message += " (JRM Module)";
+                }
+            }
+
+            ESP_LOGI(TAG, "%s", log_message.c_str());
 
             // EMD
             if (device_class == EMD_MODULE_ADDRESS)
