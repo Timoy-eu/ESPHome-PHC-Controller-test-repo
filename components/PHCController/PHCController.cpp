@@ -67,7 +67,8 @@ namespace esphome
                 // Assert message length is plausible
                 if (content_length > 3)
                 {
-                    // ESP_LOGW(TAG, "Recieved bad message (content length too long)");
+                    ESP_LOGW(TAG, "Recieved bad message (content length too long)");
+                    ESP_LOGW(TAG, "Message", address, toggle_and_length, content_length);
                     //  Send default acknowledgement
                     // ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
                     // send_acknowledgement(address, toggle);
@@ -88,10 +89,10 @@ namespace esphome
 
                 if (calculated_checksum != msg_checksum)
                 {
-                    // ESP_LOGW(TAG, "Recieved bad message (checksum missmatch 01)");
+                    ESP_LOGW(TAG, "Recieved bad message (checksum missmatch 01)");
 
                     // show more Debug information
-                    // ESP_LOGW(TAG, "Recieved: %02X %02X %02X %02X %02X", msg[0], msg[1], msg[2], msg[3], msg[4]);
+                    ESP_LOGW(TAG, "Recieved: %02X %02X %02X %02X %02X", msg[0], msg[1], msg[2], msg[3], msg[4]);
 
                     // Send default acknowledgement
                     // ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
@@ -138,7 +139,7 @@ namespace esphome
             uint8_t device_class = *device_class_id & 0xE0;
 
             // device class
-            // ESP_LOGW(TAG, "Device class: %i", device_class);
+            ESP_LOGW(TAG, "Device class: %i", device_class);
 
             // Print toogle bool
             // ESP_LOGW(TAG, "Toggle: %i", toggle);
