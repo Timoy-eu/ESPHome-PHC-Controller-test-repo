@@ -138,6 +138,7 @@ namespace esphome
             uint8_t device_id = *device_class_id & 0x1F; // DIP settings (5 LSB)
             uint8_t device_class = *device_class_id & 0xE0;
 
+/*
             // better logging for debugging
             std::string log_message = "Device class: " + std::to_string(device_class) + " with response: ";
             for (int i = 0; i < *length; i++)
@@ -173,6 +174,7 @@ namespace esphome
             }
 
             ESP_LOGI(TAG, "%s", log_message.c_str());
+*/
 
             // EMD
             if (device_class == EMD_MODULE_ADDRESS)
