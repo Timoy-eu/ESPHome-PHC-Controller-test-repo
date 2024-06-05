@@ -145,6 +145,9 @@ namespace esphome
                  sprintf(buffer, "%02X ", message[i]);
                  log_message += buffer;
              }
+
+             log_message += " with module address: " + std::to_string(device_id);
+
              ESP_LOGI(TAG, "%s", log_message.c_str());
 
             // EMD
