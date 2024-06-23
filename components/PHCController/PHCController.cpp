@@ -57,23 +57,9 @@ namespace esphome
                 bool toggle = toggle_and_length & 0x80;            // Mask the MRB (toggle bit)
                 uint8_t content_length = toggle_and_length & 0x7F; // Mask everything except for the MSB (message length)
 
-                // DEBUG Information
-                /*
-                ESP_LOGD(TAG, "Read address: %02X", address);
-                ESP_LOGD(TAG, "Read toggle and length: %02X", toggle_and_length);
-                ESP_LOGD(TAG, "Toggle bit: %d, Content length: %d", toggle, content_length);
-                */
-
                 // Assert message length is plausible
                 if (content_length > 3)
-                {
-                    ESP_LOGW(TAG, "Recieved bad message (content length too long)");
-                    ESP_LOGW(TAG, "Message", address, toggle_and_length, content_length);
-                    //  Send default acknowledgement
-                    // ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
-                    // send_acknowledgement(address, toggle);
                     return;
-                }
 
                 // Read the actual message content
                 uint8_t msg[content_length + 2];
@@ -89,23 +75,13 @@ namespace esphome
 
                 if (calculated_checksum != msg_checksum)
                 {
-                    ESP_LOGW(TAG, "Recieved bad message (checksum missmatch 01)");
-
-                    // show more Debug information
-                    ESP_LOGW(TAG, "Recieved: %02X %02X %02X %02X %02X", msg[0], msg[1], msg[2], msg[3], msg[4]);
-
-                    // Send default acknowledgement
-                    // ESP_LOGW(TAG, "Sent default acknowledgement for module: %i", address);
-                    // send_acknowledgement(address, toggle);
+                    ESP_LOGW(TAG, "Recieved bad message (checksum missmatch)");
 
                     // Skip the loop if the checksum is wrong
                     return;
                 }
 
                 last_message_time_ = millis();
-
-                // Process the command
-                // ESP_LOGW(TAG, "Processing command");
                 process_command(&address, toggle, msg + 2, &content_length);
                 return;
             }
@@ -137,52 +113,12 @@ namespace esphome
         {
             uint8_t device_id = *device_class_id & 0x1F; // DIP settings (5 LSB)
             uint8_t device_class = *device_class_id & 0xE0;
-
-/*
-            // better logging for debugging
-            std::string log_message = "Device class: " + std::to_string(device_class) + " with response: ";
-            for (int i = 0; i < *length; i++)
-            {
-                char buffer[5];
-                sprintf(buffer, "%02X ", message[i]);
-                log_message += buffer;
-            }
-
-            log_message += " with module address: " + std::to_string(device_id);
-
-            // check if the device class is known
-            if (device_class != EMD_MODULE_ADDRESS && device_class != AMD_MODULE_ADDRESS && device_class != JRM_MODULE_ADDRESS)
-            {
-                ESP_LOGW(TAG, "Received unknown device class: %i", device_class);
-                return;
-            }
-            else
-            {
-                log_message += " with known device class";
-                if (device_class == EMD_MODULE_ADDRESS)
-                {
-                    log_message += " (EMD Module)";
-                }
-                else if (device_class == AMD_MODULE_ADDRESS)
-                {
-                    log_message += " (AMD Module)";
-                }
-                else if (device_class == JRM_MODULE_ADDRESS)
-                {
-                    log_message += " (JRM Module)";
-                }
-            }
-
-            ESP_LOGI(TAG, "%s", log_message.c_str());
-*/
-
             // EMD
             if (device_class == EMD_MODULE_ADDRESS)
             {
                 // Initial configuration request message
                 if (message[0] == 0xFF)
                 {
-                    ESP_LOGW(TAG, "Received configuration request from (EMD) Module: [DIP: %i]", device_id);
                     //  Configure EMD
                     delayMicroseconds(TIMING_DELAY);
                     send_emd_config(device_id);
@@ -193,7 +129,6 @@ namespace esphome
                 // Handle acknowledgement (such as switch led state)
                 if (message[0] == 0x00)
                 {
-                    // ESP_LOGW(TAG, "Received acknowledgement from (EMD) Module: [DIP: %i, channel: %i]", device_id, channel);
                     bool handled = false;
                     uint8_t channels = message[1];
                     for (uint8_t i = 0; i < 8; i++)
@@ -212,34 +147,22 @@ namespace esphome
 
                     if (!handled)
                         ESP_LOGI(TAG, "No configuration found for Message from (EMD-Light) Module: [DIP: %i, channel: %i]", device_id, channel);
-
-                    // acknowledge the message to prevent retransmits
-                    // ESP_LOGI(TAG, "Sent acknowledgement for module: %i", *device_class_id);
-                    // send_acknowledgement(*device_class_id, toggle);
                 }
                 else
                 {
-                    // Handle switch state
                     uint8_t action = message[0] & 0x0F;
 
-                    // ESP_LOGW(TAG, "Sending acknowledgement for module: %i", *device_class_id);
-                    //  Send extra (speedy) acknowledgement, seems to help
-                    send_acknowledgement(device_id, toggle);
+                    // Send extra (speedy) acknowledgement, seems to help
+                    send_acknowledgement(*device_class_id, toggle);
 
                     //  Find the switch and set the state
                     if (emds_.count(util::key(device_id, channel)))
                     {
-                        ESP_LOGW(TAG, "Received switch state from (EMD) Module: [DIP: %i, channel: %i]", device_id, channel);
                         auto *emd = emds_[util::key(device_id, channel)];
                         if (action == 0x02) // ON
                             emd->publish_state(true);
                         if (action == 0x07 || action == 0x03 || action == 0x05) // OFF
                             emd->publish_state(false);
-
-                        // acknowledge the message to prevent retransmits
-                        // ESP_LOGI(TAG, "Sent acknowledgement for module: %i", *device_class_id);
-                        send_acknowledgement(*device_class_id, toggle);
-
                         return;
                     }
 
@@ -312,8 +235,6 @@ namespace esphome
             message[4] = static_cast<uint8_t>((crc & 0xFF00) >> 8);
 
             delayMicroseconds(TIMING_DELAY);
-            // ESP_LOGI(TAG, "Sent acknowledgement for module: %i in micro sec.: %i", address, TIMING_DELAY);
-
             write_array(message, 5, true);
         }
 
