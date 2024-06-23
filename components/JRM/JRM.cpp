@@ -103,13 +103,22 @@ namespace esphome
             }
             else if (call.get_position().has_value())
             {
-                if (call.get_position().value() >= position)
+                // check if the cover is moving and only stop it if it is moving in the opposite direction
+                if (current_operation != COVER_OPERATION_IDLE && ((current_operation == COVER_OPERATION_OPENING && call.get_position().value() < position) || (current_operation == COVER_OPERATION_CLOSING && call.get_position().value() > position)))
                 {
-                    write_state(COVER_OPERATION_OPENING, call.get_position().value());
+                    write_state(COVER_OPERATION_IDLE, cover::COVER_OPEN); // Position does not matter
                 }
                 else
                 {
-                    write_state(COVER_OPERATION_CLOSING, call.get_position().value());
+
+                    if (call.get_position().value() >= position)
+                    {
+                        write_state(COVER_OPERATION_OPENING, call.get_position().value());
+                    }
+                    else
+                    {
+                        write_state(COVER_OPERATION_CLOSING, call.get_position().value());
+                    }
                 }
             }
         }
